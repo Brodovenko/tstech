@@ -78,7 +78,6 @@ class BankService
         $transactionDTO->setSum($balanceChange);
         $transactionDTO->setType($this->strategy->getType());
         $transactionDTO->setCreatedAt($today->format('Y-m-d'));
-        $file = 'bank_service.log';
 
         if ($transactionDTO->validate()) {
             $db = \Yii::$app->db;
@@ -91,19 +90,19 @@ class BankService
                 $this->depositService->setBalance($newBalance);
                 $this->depositService->saveDeposit();
                 $transaction->commit();
-                file_put_contents($file,
-                    "id = " . $this->deposit->id . " - " . "success" . "\n"
-                    , FILE_APPEND | LOCK_EX);
+                $this->logsWriter("id = " . $this->deposit->id . " - " . "success" . "\n");
             } catch (Exception $exception) {
                 $transaction->rollBack();
-                file_put_contents($file,
-                    "id = " . $this->deposit->id . "\n" . "error" . $exception . "\n"
-                    , FILE_APPEND | LOCK_EX);
+                $this->logsWriter("id = " . $this->deposit->id . "\n" . "error" . $exception . "\n");
             }
         } else {
-            file_put_contents($file,
-                "id = " . $this->deposit->id . "\n" . "error" . $transactionDTO->getErrors() . "\n"
-                , FILE_APPEND | LOCK_EX);
+            $this->logsWriter("id = " . $this->deposit->id . "\n" . "error" . $transactionDTO->getErrors() . "\n");
         }
+    }
+
+    private function logsWriter($message)
+    {
+        $file = 'bank_service.log';
+        file_put_contents($file, $message, FILE_APPEND | LOCK_EX);
     }
 }
