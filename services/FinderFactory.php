@@ -47,34 +47,19 @@ class FinderFactory
             foreach ($this->finderDepositService->getDeposits() as $deposit) {
                 $this->bankService->setDeposit($deposit);
                 $this->bankService->setBalanceChangeStrategy(new DepositAccrual());
-                $changeDeposit = $this->bankService->changeDeposit();
-                if ($changeDeposit === true) {
-                    echo "success \n";
-                } else {
-                    var_dump($changeDeposit);
-                }
+                $this->bankService->changeDeposit();
             }
 
             foreach ($this->finderCommissionService->getDeposits() as $deposit) {
                 $this->bankService->setDeposit($deposit);
                 $this->bankService->setBalanceChangeStrategy(new Commission());
-                $changeDeposit = $this->bankService->changeDeposit();
-                if ($changeDeposit === true) {
-                    echo "success \n";
-                } else {
-                    var_dump($changeDeposit);
-                }
+                $this->bankService->changeDeposit();
             }
         } else {
             foreach ($this->finderDepositService->getDeposits() as $deposit) {
                 $this->bankService->setDeposit($deposit);
                 $this->bankService->setBalanceChangeStrategy(new DepositAccrual());
-                $changeDeposit = $this->bankService->changeDeposit();
-                if ($changeDeposit === true) {
-                    echo "success \n";
-                } else {
-                    var_dump($changeDeposit);
-                }
+                $this->bankService->changeDeposit();
             }
         }
     }

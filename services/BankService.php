@@ -48,7 +48,7 @@ class BankService
     /**
      * @param Deposit $deposit
      */
-    public function setDeposit(Deposit $deposit):void
+    public function setDeposit(Deposit $deposit): void
     {
         $this->deposit = $deposit;
     }
@@ -56,13 +56,12 @@ class BankService
     /**
      * @param BalanceChangeStrategy $strategy
      */
-    public function setBalanceChangeStrategy(BalanceChangeStrategy $strategy):void
+    public function setBalanceChangeStrategy(BalanceChangeStrategy $strategy): void
     {
         $this->strategy = $strategy;
     }
 
     /**
-     * @return array|bool|\Exception|Exception
      * @throws \Exception
      */
     public function changeDeposit()
@@ -79,6 +78,7 @@ class BankService
         $transactionDTO->setSum($balanceChange);
         $transactionDTO->setType($this->strategy->getType());
         $transactionDTO->setCreatedAt($today->format('Y-m-d'));
+        $file = 'bank_service.log';
 
         if ($transactionDTO->validate()) {
             $db = \Yii::$app->db;
@@ -91,14 +91,19 @@ class BankService
                 $this->depositService->setBalance($newBalance);
                 $this->depositService->saveDeposit();
                 $transaction->commit();
-
-                return true;
+                file_put_contents($file,
+                    "id = " . $this->deposit->id . " - " . "success" . "\n"
+                    , FILE_APPEND | LOCK_EX);
             } catch (Exception $exception) {
                 $transaction->rollBack();
-                return $exception;
+                file_put_contents($file,
+                    "id = " . $this->deposit->id . "\n" . "error" . $exception . "\n"
+                    , FILE_APPEND | LOCK_EX);
             }
         } else {
-            return $transactionDTO->getErrors();
+            file_put_contents($file,
+                "id = " . $this->deposit->id . "\n" . "error" . $transactionDTO->getErrors() . "\n"
+                , FILE_APPEND | LOCK_EX);
         }
     }
 }
