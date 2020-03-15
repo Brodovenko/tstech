@@ -7,7 +7,7 @@ use app\services\FinderFactory;
 use yii\base\Module;
 use yii\web\Controller;
 
-class SiteController extends Controller
+class BankController extends Controller
 {
     /**
      * @var BankService
