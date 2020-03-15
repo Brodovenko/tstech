@@ -100,6 +100,9 @@ class BankService
         }
     }
 
+    /**
+     * @param $message
+     */
     private function logsWriter($message)
     {
         $file = 'bank_service.log';
